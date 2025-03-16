@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clasificación de Alimentos</title>
+    <script>
+        async function cargarModelo() {
+            try {
+                const response = await fetch("https://raw.githubusercontent.com/Raptor04433/Ia/main/ia%20daludable%20o%20no.json");
+                const modelo = await response.json();
+                console.log("Modelo cargado correctamente");
+                return modelo;
+            } catch (error) {
+                console.error("Error al cargar el modelo:", error);
+                return null;
+            }
+        }
+
+        async function clasificarImagen(imageBase64) {
+            const modelo = await cargarModelo();
+            if (!modelo) {
+                return "Error al cargar el modelo";
+            }
+
+            // Simulación de clasificación con el modelo
+            // Aquí deberías realizar el procesamiento real según el modelo JSON
+            if (imageBase64.includes("saludable")) {
+                return "Alimento saludable";
+            } else {
+                return "Alimento no saludable";
+            }
+        }
+
+        // Escuchar mensajes desde Thunkable
+        window.addEventListener("message", async function(event) {
+            const imageBase64 = event.data;
+            console.log("Imagen recibida:", imageBase64);
+
+            try {
+                const resultado = await clasificarImagen(imageBase64);
+                console.log("Resultado:", resultado);
+
+                // Enviar el resultado de vuelta a Thunkable
+                window.ReactNativeWebView.postMessage(resultado);
+            } catch (error) {
+                console.error("Error al clasificar la imagen:", error);
+                window.ReactNativeWebView.postMessage("Error al clasificar la imagen");
+            }
+        });
+    </script>
+</head>
+<body>
+    <h2>Clasificación de Alimentos (Saludable o No Saludable)</h2>
+    <p>Este visor es usado para la integración con Thunkable.</p>
+</body>
+</html>
